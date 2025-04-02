@@ -13,7 +13,11 @@ module.exports = async (req, res) => {
         .json({ message: "No finance records found for this category" });
     }
 
-    res.status(200).json(finances);
+    // Calculate total amount
+    const totalAmount = finances.reduce((sum, record) => sum + record.amount, 0);
+
+    // Send response with total amount
+    res.status(200).json({ finances, totalAmount });
   } catch (error) {
     console.error("Error fetching finances by category:", error);
     res.status(500).json({ message: "Server error", error: error.message });

@@ -1,38 +1,54 @@
 const Cow = require("../../models/Cow");
+
 module.exports = async (req, res) => {
   try {
     const {
       RefNum,
       birthDate,
       breed,
+      sex,  
+      fatherId,
+      fatherBreed,
       motherId,
+      motherBreed,
       healthStatus,
       medicalHistory,
       reproductionCycle,
+      deliveryRecords,
+      childrenIds,
     } = req.body;
 
-    // Check if RefNum is provided
-    if (!RefNum) {
-      return res.status(400).json({ message: "RefNum is required" });
+    //  Validate required fields
+    if (!RefNum || !birthDate || !breed || !sex) {
+      return res.status(400).json({ message: "RefNum, birthDate, breed, and sex are required" });
     }
 
-    // Check if RefNum already exists
+    //  Ensure the 'sex' field has a valid value
+    if (!["male", "female"].includes(sex)) {
+      return res.status(400).json({ message: "Sex must be either 'male' or 'female'" });
+    }
+
+    //  Check if RefNum already exists
     const existingCow = await Cow.findOne({ RefNum });
     if (existingCow) {
-      return res
-        .status(400)
-        .json({ message: "Cow with this RefNum already exists" });
+      return res.status(400).json({ message: "Cow with this RefNum already exists" });
     }
 
-    // Create new cow instance
+    //  Create new cow instance
     const cow = new Cow({
       RefNum,
       birthDate,
       breed,
+      sex,  
+      fatherId,
+      fatherBreed,
       motherId,
+      motherBreed,
       healthStatus,
       medicalHistory,
       reproductionCycle,
+      deliveryRecords,
+      childrenIds,
     });
 
     // Save to database
